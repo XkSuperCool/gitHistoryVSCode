@@ -7,6 +7,7 @@ export type BranchGrapProps = {
     itemHeight?: number;
     updateTick?: number;
     avatars: AvatarsState;
+    LogEntryListElement?: HTMLElement;
 };
 
 let branches: { hash: string; path: any; x?: number; wasFictional: boolean }[] = [];
@@ -335,10 +336,10 @@ export function drawGitGraph(
         svg.removeChild(svg.children[0]);
     }
     if (hideGraph) {
-        for (let i = 0; i < content.children.length; i += 1) {
-            const element = content.children[i];
-            element.setAttribute('style', element.getAttribute('style') + ';padding-left:0px');
-        }
+        // for (let i = 0; i < content.children.length; i += 1) {
+        //     const element = content.children[i];
+        //     element.setAttribute('style', element.getAttribute('style') + ';padding-left:0px');
+        // }
         svg.style.display = 'none';
         return;
     }
@@ -628,23 +629,23 @@ export function drawGitGraph(
     lines.forEach((points, i) => {
         lines[i] = points.sort((a, b) => a.y - b.y);
     });
-    for (let i = startAt; i < content.children.length; ++i) {
-        const element = content.children[i];
-        if (i >= entries.length) {
-            break;
-        }
-        const minLeft = Math.min(maxLeft, 3);
-        const left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
-        const originalStyle = element.getAttribute('style');
-        element.setAttribute('style', originalStyle + ';padding-left:' + (left + 1) * lastXOffset + 'px');
-        try {
-            const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
-            const maxX = Math.max(...pointsAtY.map(p => p.x));
-            element.setAttribute('style', `${originalStyle};padding-left:${maxX + 20}px`);
-        } catch (ex) {
-            console.error('Failed to set padding of commit', ex);
-        }
-    }
+    // for (let i = startAt; i < content.children.length; ++i) {
+    //     const element = content.children[i];
+    //     if (i >= entries.length) {
+    //         break;
+    //     }
+    //     const minLeft = Math.min(maxLeft, 3);
+    //     const left = element ? Math.max(minLeft, (element as any).branchesOnLeft) : minLeft;
+    //     const originalStyle = element.getAttribute('style');
+    //     element.setAttribute('style', originalStyle + ';padding-left:' + (left + 1) * lastXOffset + 'px');
+    //     try {
+    //         const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
+    //         const maxX = Math.max(...pointsAtY.map(p => p.x));
+    //         element.setAttribute('style', `${originalStyle};padding-left:${maxX + 20}px`);
+    //     } catch (ex) {
+    //         console.error('Failed to set padding of commit', ex);
+    //     }
+    // }
     // calculate the height
     if (entries.length > 0 && !isNaN(logEntryHeight)) {
         svg.setAttribute('height', (entries.length * logEntryHeight).toString());

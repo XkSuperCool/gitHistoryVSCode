@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 import { LogEntry, Ref } from '../../../definitions';
 import { LogEntriesState, RootState } from '../../../reducers';
+import LogHeader from '../LogHeader';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
 import Dialog, { DialogType } from '../../Dialog';
@@ -59,16 +60,24 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     }
 
     public render() {
+        console.log('props', this.props);
         return (
             <div className="log-view" id="scrollCnt">
-                <BranchGraph></BranchGraph>
-                <LogEntryList
-                    ref={this.ref}
-                    logEntries={this.props.logEntries.items}
-                    onAction={this.onAction}
-                    onRefAction={this.onRefAction}
-                    onViewCommit={this.onViewCommit}
-                ></LogEntryList>
+                <LogHeader></LogHeader>
+                <div className="log-view-content">
+                    <div style={{ flex: 1, overflow: 'auto' }}>
+                        <BranchGraph
+                            LogEntryListElement={this.ref.current ? this.ref.current.ref : undefined}
+                        ></BranchGraph>
+                    </div>
+                    <LogEntryList
+                        ref={this.ref}
+                        logEntries={this.props.logEntries.items}
+                        onAction={this.onAction}
+                        onRefAction={this.onRefAction}
+                        onViewCommit={this.onViewCommit}
+                    ></LogEntryList>
+                </div>
                 <Dialog ref={r => (this.dialog = r)} onOk={this.onDialogOk.bind(this)} />
             </div>
         );

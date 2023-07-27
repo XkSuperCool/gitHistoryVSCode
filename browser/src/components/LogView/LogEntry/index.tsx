@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import * as dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
 import { LogEntry, Ref, RefType } from '../../../definitions';
 import { RootState } from '../../../reducers/index';
 import Author from '../Commit/Author';
@@ -9,6 +11,8 @@ import RemoteRef from '../Refs/Remote';
 import TagRef from '../Refs/Tag';
 import { GoGitCommit, GoClippy, GoPlus, GoFileSymlinkFile, GoFileSymlinkDirectory } from 'react-icons/go';
 import copyText from '../../../actions/copyText';
+
+dayjs.extend(relativeTime);
 
 type ResultListProps = {
     logEntry: LogEntry;
@@ -115,105 +119,104 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
         }
         return (
             <div className={cssClassName} onClick={() => this.props.onViewCommit(this.props.logEntry)}>
-                <div className="media right">
-                    <div className="media-image">
-                        <div className="ref" onClick={preventPropagation}>
-                            {this.renderRemoteRefs()}
-                            {this.renderHeadRef()}
-                            {this.renderTagRef()}
-                        </div>
-                        <div className="buttons" onClick={() => this.props.onViewCommit(this.props.logEntry)}>
-                            <div>
-                                <span
-                                    onClick={e => copyText(e, this.props.logEntry.hash.full)}
-                                    className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Copy hash to clipboard"
-                                >
-                                    {this.props.logEntry.hash.short}&nbsp;
-                                    <GoClippy></GoClippy>
-                                </span>
-                                &nbsp;
-                                <span
+                {/* <div className="media-image">
+                    <div className="ref" onClick={preventPropagation}>
+                        {this.renderRemoteRefs()}
+                        {this.renderHeadRef()}
+                        {this.renderTagRef()}
+                    </div>
+                    <div className="buttons" onClick={() => this.props.onViewCommit(this.props.logEntry)}>
+                        <div>
+                            <span
+                                onClick={e => copyText(e, this.props.logEntry.hash.full)}
+                                className="btnx hash clipboard hint--top-left hint--rounded hint--bounce"
+                                aria-label="Copy hash to clipboard"
+                            >
+                                {this.props.logEntry.hash.short}&nbsp;
+                                <GoClippy></GoClippy>
+                            </span>
+                            &nbsp;
+                            <span
+                                role="button"
+                                className="btnx hint--top-left hint--rounded hint--bounce"
+                                aria-label="Soft reset to this commit"
+                            >
+                                <a
                                     role="button"
-                                    className="btnx hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Soft reset to this commit"
+                                    onClick={handleClickAndPreventPropagation(() =>
+                                        this.props.onAction(this.props.logEntry, 'reset_soft'),
+                                    )}
                                 >
-                                    <a
-                                        role="button"
-                                        onClick={handleClickAndPreventPropagation(() =>
-                                            this.props.onAction(this.props.logEntry, 'reset_soft'),
-                                        )}
-                                    >
-                                        <GoFileSymlinkFile></GoFileSymlinkFile>Soft
-                                    </a>
-                                </span>
-                                <span
+                                    <GoFileSymlinkFile></GoFileSymlinkFile>Soft
+                                </a>
+                            </span>
+                            <span
+                                role="button"
+                                className="btnx hint--top-left hint--rounded hint--bounce"
+                                aria-label="Hard reset to this commit"
+                            >
+                                <a
                                     role="button"
-                                    className="btnx hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Hard reset to this commit"
+                                    onClick={handleClickAndPreventPropagation(() =>
+                                        this.props.onAction(this.props.logEntry, 'reset_hard'),
+                                    )}
                                 >
-                                    <a
-                                        role="button"
-                                        onClick={handleClickAndPreventPropagation(() =>
-                                            this.props.onAction(this.props.logEntry, 'reset_hard'),
-                                        )}
-                                    >
-                                        <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
-                                    </a>
-                                </span>
-                                <span
+                                    <GoFileSymlinkDirectory></GoFileSymlinkDirectory>Hard
+                                </a>
+                            </span>
+                            <span
+                                role="button"
+                                className="btnx hint--top-left hint--rounded hint--bounce"
+                                aria-label="Create a new tag"
+                            >
+                                <a
                                     role="button"
-                                    className="btnx hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Create a new tag"
+                                    onClick={handleClickAndPreventPropagation(() =>
+                                        this.props.onAction(this.props.logEntry, 'newtag'),
+                                    )}
                                 >
-                                    <a
-                                        role="button"
-                                        onClick={handleClickAndPreventPropagation(() =>
-                                            this.props.onAction(this.props.logEntry, 'newtag'),
-                                        )}
-                                    >
-                                        <GoPlus></GoPlus>Tag
-                                    </a>
-                                </span>
-                                <span
+                                    <GoPlus></GoPlus>Tag
+                                </a>
+                            </span>
+                            <span
+                                role="button"
+                                className="btnx hint--top-left hint--rounded hint--bounce"
+                                aria-label="Create a new branch from here"
+                            >
+                                <a
                                     role="button"
-                                    className="btnx hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Create a new branch from here"
+                                    onClick={handleClickAndPreventPropagation(() =>
+                                        this.props.onAction(this.props.logEntry, 'newbranch'),
+                                    )}
                                 >
-                                    <a
-                                        role="button"
-                                        onClick={handleClickAndPreventPropagation(() =>
-                                            this.props.onAction(this.props.logEntry, 'newbranch'),
-                                        )}
-                                    >
-                                        <GoPlus></GoPlus>Branch
-                                    </a>
-                                </span>
-                                <span
+                                    <GoPlus></GoPlus>Branch
+                                </a>
+                            </span>
+                            <span
+                                role="button"
+                                className="btnx hint--top-left hint--rounded hint--bounce"
+                                aria-label="Cherry pick, Compare, etc"
+                            >
+                                <a
                                     role="button"
-                                    className="btnx hint--top-left hint--rounded hint--bounce"
-                                    aria-label="Cherry pick, Compare, etc"
+                                    onClick={handleClickAndPreventPropagation(() =>
+                                        this.props.onAction(this.props.logEntry, ''),
+                                    )}
                                 >
-                                    <a
-                                        role="button"
-                                        onClick={handleClickAndPreventPropagation(() =>
-                                            this.props.onAction(this.props.logEntry, ''),
-                                        )}
-                                    >
-                                        <GoGitCommit></GoGitCommit>More
-                                    </a>
-                                </span>
-                            </div>
+                                    <GoGitCommit></GoGitCommit>More
+                                </a>
+                            </span>
                         </div>
                     </div>
-                    <div role="button" className="media-content">
-                        <div className="commit-subject" title={gitmojify(this.props.logEntry.subject)}>
-                            {gitmojify(this.props.logEntry.subject)}
-                            <span style={{ marginLeft: '.5em' }}>{this.isLoading() ? this.showLoading() : ''}</span>
-                        </div>
-                        <Author result={this.props.logEntry.author}></Author>
-                    </div>
+                </div> */}
+                <div className="log-entry-item commit-subject" title={gitmojify(this.props.logEntry.subject)}>
+                    {gitmojify(this.props.logEntry.subject)}
+                    <span style={{ marginLeft: '.5em' }}>{this.isLoading() ? this.showLoading() : ''}</span>
                 </div>
+                <div className="log-entry-item">{this.props.logEntry.author.name}</div>
+                <div className="log-entry-item">{this.props.logEntry.committedFiles.length}</div>
+                <div className="log-entry-item">{dayjs(this.props.logEntry.committer.date).fromNow()}</div>
+                <div className="log-entry-item">{this.props.logEntry.hash.short}</div>
             </div>
         );
     }

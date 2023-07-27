@@ -25,6 +25,10 @@ export default class LogEntryList extends React.Component<ResultProps> {
                 onViewCommit={this.props.onViewCommit}
             />
         ));
-        return <div ref={ref => (this.ref = ref)}>{results}</div>;
+        return (
+            <div ref={ref => (this.ref = ref)} style={{ flex: 5 }}>
+                {results}
+            </div>
+        );
     }
 }

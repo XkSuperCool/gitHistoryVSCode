@@ -5,9 +5,8 @@ import { BranchGrapProps, drawGitGraph } from './svgGenerator';
 
 class BrachGraph extends React.Component<BranchGrapProps> {
     componentDidUpdate(prevProps: BranchGrapProps) {
-        this.props.avatars;
         if (this.props.hideGraph) {
-            drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, [], true);
+            drawGitGraph(this.svg, this.props.LogEntryListElement, 0, this.props.itemHeight, [], true);
             return;
         }
         if (prevProps.updateTick === this.props.updateTick) {
@@ -16,10 +15,10 @@ class BrachGraph extends React.Component<BranchGrapProps> {
 
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, []);
+        drawGitGraph(this.svg, this.props.LogEntryListElement, 0, this.props.itemHeight, []);
         drawGitGraph(
             this.svg,
-            this.svg.nextSibling as HTMLElement,
+            this.props.LogEntryListElement,
             0,
             this.props.itemHeight,
             this.props.logEntries,
@@ -34,7 +33,7 @@ class BrachGraph extends React.Component<BranchGrapProps> {
     }
 }
 
-function mapStateToProps(state: RootState): BranchGrapProps {
+function mapStateToProps(state: RootState, props: Pick<BranchGrapProps, 'LogEntryListElement'>): BranchGrapProps {
     const hideGraph =
         state &&
         state.logEntries &&
@@ -44,6 +43,7 @@ function mapStateToProps(state: RootState): BranchGrapProps {
             state.logEntries.isLoading);
 
     return {
+        ...props,
         avatars: state.avatars,
         logEntries: state.logEntries.items,
         hideGraph,
