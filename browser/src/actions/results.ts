@@ -17,6 +17,7 @@ export const goToNextPage = createAction<void>(Actions.GO_TO_NEXT_PAGE);
 export const notifyIsLoading = createAction(Actions.IS_LOADING_COMMITS);
 export const notifyIsFetchingCommit = createAction<string>(Actions.IS_FETCHING_COMMIT);
 export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
+export const updateGraphTick = createAction<void>(Actions.UPDATE_GRAPH_TICK);
 export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -94,6 +95,7 @@ export namespace ResultActions {
                 ...store.settings,
             }).then(x => {
                 dispatch(fetchedAvatar(x));
+                dispatch(updateGraphTick());
             });
         };
     };

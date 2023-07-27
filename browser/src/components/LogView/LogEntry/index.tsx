@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { LogEntry, Ref, RefType } from '../../../definitions';
 import { RootState } from '../../../reducers/index';
 import Author from '../Commit/Author';
-import Avatar from '../Commit/Avatar';
 import { gitmojify } from '../gitmojify';
 import HeadRef from '../Refs/Head';
 import RemoteRef from '../Refs/Remote';
@@ -212,7 +211,6 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                             {gitmojify(this.props.logEntry.subject)}
                             <span style={{ marginLeft: '.5em' }}>{this.isLoading() ? this.showLoading() : ''}</span>
                         </div>
-                        <Avatar result={this.props.logEntry.author}></Avatar>
                         <Author result={this.props.logEntry.author}></Author>
                     </div>
                 </div>

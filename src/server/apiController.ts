@@ -6,7 +6,7 @@ import { ICommandManager } from '../application/types/commandManager';
 import { IGitCommitViewDetailsCommandHandler } from '../commandHandlers/types';
 import { CommitDetails, FileCommitDetails } from '../common/types';
 import { IServiceContainer } from '../ioc/types';
-import { Avatar, BranchSelection, CommittedFile, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
+import { BranchSelection, CommittedFile, IGitService, IPostMessage, LogEntry, Ref, RefType } from '../types';
 import { captureTelemetry } from '../common/telemetry';
 import { IWorkspaceService } from '../application/types/workspace';
 
@@ -93,28 +93,9 @@ export class ApiController {
 
     @captureTelemetry()
     public async getAvatars() {
-        const originType = await this.gitService.getOriginType();
-        if (!originType) {
-            this.webview.postMessage({
-                cmd: 'getAvatarsResult',
-                error: 'No origin type found',
-            });
-
-            return;
-        }
         const providers = this.serviceContainer.getAll<IAvatarProvider>(IAvatarProvider);
-        const provider = providers.find(item => item.supported(originType));
         const genericProvider = providers.find(item => item.supported(GitOriginType.any))!;
-
-        let avatars: Avatar[];
-
-        if (provider) {
-            avatars = await provider.getAvatars(this.gitService);
-        } else {
-            avatars = await genericProvider.getAvatars(this.gitService);
-        }
-
-        return avatars;
+        return await genericProvider.getAvatars(this.gitService);
     }
 
     @captureTelemetry()

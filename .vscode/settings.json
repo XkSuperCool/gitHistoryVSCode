@@ -16,16 +16,16 @@
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
     "[typescript]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
     },
     "[javascript]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
     },
     "[javascriptreact]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
     },
     "[typescriptreact]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

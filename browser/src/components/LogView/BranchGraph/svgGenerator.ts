@@ -1,10 +1,12 @@
-import { LogEntry } from '../../../definitions';
+import { AvatarsState } from 'src/reducers';
+import { ActionedUser, LogEntry } from '../../../definitions';
 
 export type BranchGrapProps = {
     hideGraph: boolean;
     logEntries: LogEntry[];
     itemHeight?: number;
     updateTick?: number;
+    avatars: AvatarsState;
 };
 
 let branches: { hash: string; path: any; x?: number; wasFictional: boolean }[] = [];
@@ -263,6 +265,60 @@ class PathGenerator {
     }
 }
 
+interface RenderAvatarOptions {
+    id: string;
+    avatar: string;
+    cx: string;
+    cy: string;
+    fillColor: string;
+}
+
+// Maybe there's a better way
+function renderAvatar(options: RenderAvatarOptions) {
+    const namespaceURI = 'http://www.w3.org/2000/svg';
+    const clipPath = document.createElementNS(namespaceURI, 'clipPath');
+    clipPath.setAttribute('id', `circleView-${options.id}`);
+    clipPath.appendChild(createCircle());
+
+    const fillCircle = createCircle();
+    fillCircle.setAttribute('fill', 'none');
+
+    const image = document.createElementNS(namespaceURI, 'image');
+    image.setAttribute('width', '22');
+    image.setAttribute('height', '22');
+    image.setAttribute('x', (+options.cx - 11).toString());
+    image.setAttribute('y', (+options.cy - 11).toString());
+    image.setAttribute('clip-path', `url(#circleView-${options.id})`);
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', options.avatar);
+
+    const borderCircle = createCircle();
+    borderCircle.setAttribute('stroke', options.fillColor);
+    borderCircle.setAttribute('stroke-width', '2');
+    borderCircle.setAttribute('fill', 'none');
+    borderCircle.setAttribute('class', 'avatar');
+
+    function createCircle() {
+        const circle = document.createElementNS(namespaceURI, 'circle');
+        circle.setAttribute('cx', options.cx);
+        circle.setAttribute('cy', options.cy);
+        circle.setAttribute('r', '11');
+        return circle;
+    }
+
+    return [clipPath, fillCircle, image, borderCircle];
+}
+
+function getAvatarUrl(user: ActionedUser, avatars: AvatarsState) {
+    let avatarUrl = '';
+    if (user) {
+        const avatar = avatars.find(
+            item => item.name === user.name || item.login === user.name || item.email === user.email,
+        );
+        avatarUrl = avatar ? avatar.avatarUrl : '';
+    }
+    return avatarUrl;
+}
+
 // TODO: Think about appending (could be very expensive, but could be something worthwhile)
 // Appending could produce a better UX
 // Dunno, I think, cuz this way you can see where merges take place, rather than seeing a line vanish off
@@ -273,6 +329,7 @@ export function drawGitGraph(
     logEntryHeight = 60.8,
     entries: LogEntry[],
     hideGraph = false,
+    avatars: AvatarsState = [],
 ) {
     while (svg.children.length > 0) {
         svg.removeChild(svg.children[0]);
@@ -297,8 +354,8 @@ export function drawGitGraph(
     let currentY = (0 + 0.5) * logEntryHeight;
     const topMostY = (0 + 0.5) * logEntryHeight;
     let maxLeft = 0;
-    let lastXOffset = 12;
-    let maxXOffset = 12;
+    let lastXOffset = 20;
+    let maxXOffset = 20;
     if (startAt === 0) {
         branchColor = 0;
     }
@@ -306,7 +363,6 @@ export function drawGitGraph(
         content.children[i].className = 'hidden';
     }
     // Use this for new orphaned branches
-    const circlesToAppend: SVGCircleElement[] = [];
     let fictionalBranches: { path: string; x?: number }[] = [];
     // let fictionalBranch2;
     let tabbedOnce = false;
@@ -326,7 +382,7 @@ export function drawGitGraph(
 
         // Find branches to join
         let childCount = 0;
-        const xOffset = 12;
+        const xOffset = 20;
         let removedBranches = 0;
         let branchFound = i === startAt ? true : false;
         let padParentCount = 0;
@@ -514,18 +570,18 @@ export function drawGitGraph(
             tabbedOnce = true;
         }
 
-        const svgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         let cx = ((branchFound || i === 0 ? index : branches.length - 1) + 1) * xOffset;
         if (xFromFictionalBranch > 0) {
             cx = xFromFictionalBranch;
         }
 
-        svgCircle.setAttribute('cx', cx.toString());
-        svgCircle.setAttribute('cy', (currentY + circleOffset).toString());
-        svgCircle.setAttribute('r', '4');
-        // Enabled only for debugging
-        svg.appendChild(svgCircle);
-        circlesToAppend.push(svgCircle);
+        renderAvatar({
+            id: i.toString(),
+            avatar: getAvatarUrl(entry.author, avatars),
+            fillColor: COLORS[branchColor],
+            cx: cx.toString(),
+            cy: (currentY + circleOffset).toString(),
+        }).forEach(el => svg.appendChild(el));
 
         (entryElement as any).branchesOnLeft = Math.max((entryElement as any).branchesOnLeft, branches.length);
         maxLeft = Math.max(maxLeft, (entryElement as any).branchesOnLeft);
@@ -584,7 +640,7 @@ export function drawGitGraph(
         try {
             const pointsAtY = lines.map(points => getPointAtY((i + 1) * logEntryHeight, points));
             const maxX = Math.max(...pointsAtY.map(p => p.x));
-            element.setAttribute('style', `${originalStyle};padding-left:${maxX + 12}px`);
+            element.setAttribute('style', `${originalStyle};padding-left:${maxX + 20}px`);
         } catch (ex) {
             console.error('Failed to set padding of commit', ex);
         }

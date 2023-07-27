@@ -5,6 +5,7 @@ import { BranchGrapProps, drawGitGraph } from './svgGenerator';
 
 class BrachGraph extends React.Component<BranchGrapProps> {
     componentDidUpdate(prevProps: BranchGrapProps) {
+        this.props.avatars;
         if (this.props.hideGraph) {
             drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, [], true);
             return;
@@ -16,7 +17,15 @@ class BrachGraph extends React.Component<BranchGrapProps> {
         // Hack, first clear before rebuilding.
         // Remember, we will need to support apending results, as opposed to clearing page
         drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, []);
-        drawGitGraph(this.svg, this.svg.nextSibling as HTMLElement, 0, this.props.itemHeight, this.props.logEntries);
+        drawGitGraph(
+            this.svg,
+            this.svg.nextSibling as HTMLElement,
+            0,
+            this.props.itemHeight,
+            this.props.logEntries,
+            false,
+            this.props.avatars,
+        );
     }
 
     private svg: SVGSVGElement;
@@ -35,6 +44,7 @@ function mapStateToProps(state: RootState): BranchGrapProps {
             state.logEntries.isLoading);
 
     return {
+        avatars: state.avatars,
         logEntries: state.logEntries.items,
         hideGraph,
         itemHeight: state.graph.itemHeight,
