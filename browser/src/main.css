@@ -29,6 +29,7 @@ body {
 }
 
 :root {
+    --base-fs: 1.2rem;
     --shallow-font-color: rgba(219, 215, 202, 0.47);
 }
 
@@ -101,16 +102,18 @@ div.appRoot > header {
 .log-header {
     display: flex;
     color: var(--shallow-font-color);
-    font-size: 12px;
+    font-size: var(--base-fs);
     background-color: rgba(31, 31, 31, 1);
     padding: 5px 0;
     width: 100%;
     position: fixed;
     z-index: 10;
+    padding-right: 10px;
 }
 
 .log-header .title {
-    flex: 1;
+    flex: 2;
+    width: 0;
     padding: 0 5px;
 }
 
@@ -119,8 +122,31 @@ div.appRoot > header {
     padding-top: 28px;
 }
 
+.log-branch-and-tag {
+    display: flex;
+}
+
+.log-view-content .log-branch-tag {
+    flex: 2;
+    width: 0;
+}
+
+.log-view-content .log-entry-list {
+    flex: 11;
+    width: 0;
+}
+
+.log-view-content .log-branch-graph {
+    flex: 1;
+    overflow-x: auto;
+}
+
+.log-view-content .log-branch-graph > svg {
+    transform: translateX(8%);
+}
+
 .log-entry {
-    font-size: 12px;
+    font-size: var(--base-fs);
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: var(--vscode-editorGroup-border);
@@ -143,8 +169,11 @@ div.appRoot > header {
 
 .log-entry .log-entry-item {
     color: var(--shallow-font-color);
-    flex: 1;
-    padding: 0.6em 5px;
+    flex: 2;
+    width: 0;
+    padding: 0 5px;
+    height: 28px;
+    line-height: 28px;
 }
 
 .log-entry-gray{
@@ -212,6 +241,7 @@ div.appRoot > header {
 }
 
 .log-entry .commit-subject {
+    flex: 3;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -245,31 +275,38 @@ div.appRoot > header {
 .commit-remote-container,
 .commit-tag-container,
 .commit-head-container {
-	border-radius: 5px;
-	margin-left: .3em;
+    flex: 1;
+    max-width: 75%;
 	white-space: nowrap;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
 }
 
-.commit-head-container {
+.commit-head-container .refs {
 	background-color: var(--vscode-editorGutter-addedBackground);
 }
 
-.commit-remote-container {
+.commit-remote-container .refs {
 	background-color: var(--vscode-editorGutter-deletedBackground);
 }
 
-.commit-tag-container {
+.commit-tag-container .refs {
 	background-color: var(--vscode-terminal-ansiBrightBlack);
 }
 
 .commit-remote-container .refs,
 .commit-tag-container .refs,
 .commit-head-container .refs {
-	display: block;
+    width: 100%;
 	color: white;
-	font-size: 75%;
-    padding: 0.25em 0.5em;
+	font-size: var(--base-fs);
     display: flex;
+    align-items: center;
+    padding: 2px 5px;
+    border-radius: 2px;
+    gap: 5px;
 }
 
 .commit-remote-container .refs span,
@@ -478,6 +515,10 @@ header .links {
 /* Details View */
 .hidden {
 	display:none;
+}
+
+.Pane1::-webkit-scrollbar-thumb {
+    background-color: var(--vscode-scrollbarSlider-background);
 }
 
 .Pane2 {

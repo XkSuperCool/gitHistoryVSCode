@@ -6,6 +6,7 @@ import { LogEntriesState, RootState } from '../../../reducers';
 import LogHeader from '../LogHeader';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
+import LogBranchAndTag from '../LogBranchAndTag';
 import Dialog, { DialogType } from '../../Dialog';
 import { IConfiguration } from 'src/reducers/vscode';
 
@@ -65,18 +66,23 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             <div className="log-view" id="scrollCnt">
                 <LogHeader></LogHeader>
                 <div className="log-view-content">
-                    <div style={{ flex: 1, overflow: 'auto' }}>
+                    <div className="log-branch-tag">
+                        <LogBranchAndTag logEntries={this.props.logEntries.items} />
+                    </div>
+                    <div className="log-branch-graph">
                         <BranchGraph
                             LogEntryListElement={this.ref.current ? this.ref.current.ref : undefined}
                         ></BranchGraph>
                     </div>
-                    <LogEntryList
-                        ref={this.ref}
-                        logEntries={this.props.logEntries.items}
-                        onAction={this.onAction}
-                        onRefAction={this.onRefAction}
-                        onViewCommit={this.onViewCommit}
-                    ></LogEntryList>
+                    <div className="log-entry-list">
+                        <LogEntryList
+                            ref={this.ref}
+                            logEntries={this.props.logEntries.items}
+                            onAction={this.onAction}
+                            onRefAction={this.onRefAction}
+                            onViewCommit={this.onViewCommit}
+                        ></LogEntryList>
+                    </div>
                 </div>
                 <Dialog ref={r => (this.dialog = r)} onOk={this.onDialogOk.bind(this)} />
             </div>
