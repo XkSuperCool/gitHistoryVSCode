@@ -303,7 +303,6 @@ header .links {
 
 /* SplitPanel - Resizer */
 .Resizer {
-	background: var(--vscode-scrollbarSlider-hoverBackground);
 	z-index: 1;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -332,16 +331,10 @@ header .links {
   }
 
   .Resizer.vertical {
-	width: 10px;
-	border-left: 3px solid rgba(255, 255, 255, 0);
-	border-right: 3px solid rgba(255, 255, 255, 0);
+	width: 5px;
 	cursor: col-resize;
   }
 
-  .Resizer.vertical:hover {
-	border-left: 2px solid rgba(0, 0, 0, 0.5);
-	border-right: 2px solid rgba(0, 0, 0, 0.5);
-  }
   .Resizer.disabled {
 	cursor: not-allowed;
   }
@@ -469,23 +462,23 @@ header .links {
 	color: gray;
 }
 
-#detail-view {
+/* #detail-view {
 	margin: .5em;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	max-height:  100%;
-}
+} */
 
-#detail-view .commit-subject {
+/* #detail-view .commit-subject {
 	font-size: 1.2em;
 	font-weight: lighter;
 	margin: 0;
-}
+} */
 
 #detail-view .commit-body,
 #detail-view .commit-notes {
-	margin: 1em 0;
+	margin-top: 1em;
 	white-space: pre-wrap;
 }
 
@@ -494,19 +487,49 @@ header .links {
 	display: none;
 }
 
-#detail-view .authorAndCommitInfoContainer {
-	flex: 1 1;
-	display: flex;
-	justify-content: space-between;
-}
-#detail-view .authorAndCommitInfoContainer img.avatar {
-    height:80px;
-    width:80px;
-    float: left;
-    margin-right: 0.5em;
+#detail-view .authorContainer {
+    display: flex;
+    margin-left: 15px;
 }
 
-#detail-view .action-btn {
+#detail-view .authorContainer img.avatar {
+    height:40px;
+    width:40px;
+    margin-right: 10px;
+}
+
+#detail-view .committed-message {
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 10px 15px;
+    background-color: var(--vscode-input-background);
+}
+
+#detail-view .detail-view-panel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    padding: 5px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+#detail-view .panel-content {
+    padding-left: 15px;
+}
+
+#detail-view .detail-view-panel .files-added {
+    color: var(--vscode-gitDecoration-addedResourceForeground);
+}
+#detail-view .detail-view-panel .files-modified {
+    color: var(--vscode-gitDecoration-modifiedResourceForeground);
+}
+#detail-view .detail-view-panel .files-deleted {
+    color: var(--vscode-gitDecoration-deletedResourceForeground);
+}
+
+/* #detail-view .action-btn {
 	margin-left: 1rem;
 	margin-right: 1rem;
 	display: inline-block;
@@ -526,19 +549,16 @@ header .links {
 
 #detail-view div.actions button, #detail-view div.actions input {
 	margin: 0.2em;
-}
+} */
 
-#detail-view .comitted-files {
-	width: 100%;
-}
 
-#detail-view div.actions > .textInput {
+/* #detail-view div.actions > .textInput {
 	width: unset;
 }
 
 #detail-view div.actions svg {
 	vertical-align: middle;
-}
+} */
 
 .diff-row {
 	overflow: hidden;
@@ -701,3 +721,19 @@ header .links {
     border: 1px solid var(--vscode-focusBorder);
 }
 
+.tree-node {
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-sideBar-foreground);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tree-node .tree-node-icon {
+    margin-right: 5px;
+}
+
+.tree-node .tree-node-name {
+    margin-left: 5px;
+}

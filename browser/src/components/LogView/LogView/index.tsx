@@ -49,6 +49,12 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
             const totalHeight = el.offsetHeight;
             const logEntryHeight = totalHeight / this.props.logEntries.items.length;
             this.props.commitsRendered(logEntryHeight);
+
+            // The first logEntry is selected by default
+            const firstLogEntry = this.props.logEntries.items[0];
+            if (!this.props.logEntries.selected) {
+                this.onViewCommit(firstLogEntry);
+            }
         }
     }
 

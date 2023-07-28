@@ -1,7 +1,6 @@
 import { handleActions } from 'redux-actions';
 
 export type IConfiguration = {
-    sideBySide: boolean;
     logLevel: string;
     pageSize: number;
 };
