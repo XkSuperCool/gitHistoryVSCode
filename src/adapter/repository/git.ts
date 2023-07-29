@@ -6,7 +6,18 @@ import * as vscode from 'vscode';
 import { IWorkspaceService } from '../../application/types/workspace';
 import { cache } from '../../common/cache';
 import { IServiceContainer } from '../../ioc/types';
-import { ActionedUser, Branch, CommittedFile, Hash, IGitService, LogEntries, LogEntry, Ref, FsUri } from '../../types';
+import {
+    ActionedUser,
+    Branch,
+    CommittedFile,
+    Hash,
+    IGitService,
+    LogEntries,
+    LogEntry,
+    Ref,
+    FsUri,
+    CommitInfo,
+} from '../../types';
 import { IGitCommandExecutor } from '../exec';
 import { IFileStatParser, ILogParser } from '../parsers/types';
 import { ITEM_ENTRY_SEPARATOR, LOG_ENTRY_SEPARATOR, LOG_FORMAT_ARGS } from './constants';
@@ -241,30 +252,28 @@ export class Git implements IGitService {
             author,
         );
 
-        const gitRepoPath = this.getGitRoot();
         const countPromise = lineNumber
             ? Promise.resolve(-1)
             : this.exec(...args.counterArgs).then(value => parseInt(value));
         ``;
 
         const itemsPromise = Promise.all([this.exec(...args.logArgs), this.loadDereferenceHashes()]).then(
-            ([output]) => {
-                console.error(output);
+            async ([output]) => {
                 return Promise.all(
-                    output
-                        .split(LOG_ENTRY_SEPARATOR)
-                        .map(entry => {
-                            if (entry.length === 0) {
-                                return;
-                            }
-                            return this.logParser.parse(gitRepoPath, entry, ITEM_ENTRY_SEPARATOR, LOG_FORMAT_ARGS);
-                        })
-                        .filter(logEntry => logEntry !== undefined)
-                        .map(async logEntry => {
+                    output.split(LOG_ENTRY_SEPARATOR).map(async entry => {
+                        if (entry.length === 0) {
+                            return;
+                        }
+                        const logItems = entry.split(ITEM_ENTRY_SEPARATOR);
+                        const hash = this.logParser.getCommitInfo(logItems, LOG_FORMAT_ARGS, CommitInfo.FullHash);
+                        const logEntry = await this.getCommit(hash);
+                        if (logEntry) {
                             // fill the refs from native git extension
-                            logEntry!.refs = await this.getRefsContainingCommit(logEntry!.hash.full);
-                            return logEntry!;
-                        }),
+                            logEntry.refs = await this.getRefsContainingCommit(logEntry!.hash.full);
+                            return logEntry;
+                        }
+                        return void 0;
+                    }),
                 );
             },
         );
@@ -272,15 +281,16 @@ export class Git implements IGitService {
         const [items, headHashes, count] = await Promise.all([itemsPromise, this.getHeadHashes(), countPromise]);
         const headHashesOnly = headHashes.map(item => item.hash);
 
-        items
-            .filter(x => headHashesOnly.indexOf(x.hash.full) > -1)
+        const filteredItems = items.filter(logEntry => logEntry !== undefined);
+        filteredItems
+            .filter(x => headHashesOnly.indexOf(x!.hash.full) > -1)
             .forEach(item => {
-                item.isLastCommit = true;
+                item!.isLastCommit = true;
             });
 
         // @ts-ignore
         return {
-            items,
+            items: filteredItems,
             count,
             branches,
             file,

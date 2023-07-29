@@ -21,10 +21,15 @@ type AppProps = {
     search: typeof ResultActions.search;
 } & typeof ResultActions;
 
-interface AppState {}
+interface AppState {
+    pane2Size: number;
+}
 
 class App extends React.Component<AppProps, AppState> {
     private splitPane;
+    state = {
+        pane2Size: 300,
+    };
 
     constructor(props?: AppProps, context?: any) {
         super(props, context);
@@ -54,11 +59,16 @@ class App extends React.Component<AppProps, AppState> {
                         ref={this.splitPane}
                         split={'vertical'}
                         pane1Style={{ overflowY: 'auto' }}
-                        defaultSize="300px"
+                        defaultSize={350}
                         style={{ paddingTop: '40px' }}
                         primary="second"
+                        onChange={size => this.setState({ pane2Size: size })}
                     >
-                        <LogView logEntries={this.props.logEntries} configuration={this.props.configuration}></LogView>
+                        <LogView
+                            pane2Size={this.state.pane2Size}
+                            logEntries={this.props.logEntries}
+                            configuration={this.props.configuration}
+                        ></LogView>
                         {this.props.logEntries && this.props.logEntries.selected ? (
                             <Commit />
                         ) : (

@@ -31,6 +31,7 @@ body {
 :root {
     --base-fs: 1.2rem;
     --shallow-font-color: rgba(219, 215, 202, 0.47);
+    --log-entry-height: 28px;
 }
 
 .hidden {
@@ -105,7 +106,7 @@ div.appRoot > header {
     font-size: var(--base-fs);
     background-color: rgba(31, 31, 31, 1);
     padding: 5px 0;
-    width: 100%;
+    left: 0;
     position: fixed;
     z-index: 10;
     padding-right: 10px;
@@ -115,15 +116,19 @@ div.appRoot > header {
     flex: 2;
     width: 0;
     padding: 0 5px;
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .log-view-content {
     display: flex;
-    padding-top: 28px;
+    padding-top: var(--log-entry-height);
 }
 
 .log-branch-and-tag {
     display: flex;
+    padding-left: 5px;
 }
 
 .log-view-content .log-branch-tag {
@@ -142,7 +147,7 @@ div.appRoot > header {
 }
 
 .log-view-content .log-branch-graph > svg {
-    transform: translateX(8%);
+    transform: translateX(5%);
 }
 
 .log-entry {
@@ -165,6 +170,7 @@ div.appRoot > header {
 
 .log-entry.active .log-entry-item {
 	color: rgba(219, 215, 202, 0.79);
+    transition: .2s ease-in-out;
 }
 
 .log-entry .log-entry-item {
@@ -172,8 +178,29 @@ div.appRoot > header {
     flex: 2;
     width: 0;
     padding: 0 5px;
-    height: 28px;
-    line-height: 28px;
+    height: var(--log-entry-height);
+    line-height: var(--log-entry-height);
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.log-entry .hash-copy {
+    cursor: copy;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.log-entry .changes-info {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 15px;
+}
+
+.log-entry .changes-info .changes-bar {
+    width: 75%;
 }
 
 .log-entry-gray{
@@ -278,7 +305,7 @@ div.appRoot > header {
     flex: 1;
     max-width: 75%;
 	white-space: nowrap;
-    height: 28px;
+    height: var(--log-entry-height);
     display: flex;
     align-items: center;
     margin-right: 10px;
@@ -535,13 +562,22 @@ header .links {
 	color: gray;
 }
 
-/* #detail-view {
-	margin: .5em;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	max-height:  100%;
-} */
+#detail-view {
+	padding-bottom: 20px;
+}
+
+#detail-view .detail-view-header {
+    font-size: var(--base-fs);
+    height: 27px;
+    line-height: 27px;
+    color: var(--shallow-font-color);
+    padding: 0 5px;
+    background: rgba(31, 31, 31, 1);
+    position: sticky;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
 
 /* #detail-view .commit-subject {
 	font-size: 1.2em;
@@ -563,6 +599,7 @@ header .links {
 #detail-view .authorContainer {
     display: flex;
     margin-left: 15px;
+    margin-top: 10px;
 }
 
 #detail-view .authorContainer img.avatar {
@@ -795,12 +832,16 @@ header .links {
 }
 
 .tree-node {
-    font-size: var(--vscode-font-size);
     color: var(--vscode-sideBar-foreground);
     display: flex;
     align-items: center;
     cursor: pointer;
     user-select: none;
+    padding: 2px 0;
+}
+
+.tree-node svg:not(.tree-node-icon) {
+    font-size: 1.6rem;
 }
 
 .tree-node .tree-node-icon {
@@ -809,4 +850,39 @@ header .links {
 
 .tree-node .tree-node-name {
     margin-left: 5px;
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.changes-bar {
+    display: flex;
+    gap: 1px;
+    height: 35%;
+    opacity: .5;
+}
+
+.changes-bar.active {
+    opacity: 1;
+    transition: .2s ease-in-out;
+}
+
+.changes-bar .added {
+    border-radius: 2px;
+    background-color: var(--vscode-gitDecoration-addedResourceForeground);
+}
+
+.changes-bar .modified {
+    border-radius: 2px;
+    background-color: var(--vscode-gitDecoration-modifiedResourceForeground);
+}
+
+.changes-bar .deleted {
+    border-radius: 2px;
+    background-color: var(--vscode-gitDecoration-deletedResourceForeground);
+}
+
+.changes-bar > div:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }

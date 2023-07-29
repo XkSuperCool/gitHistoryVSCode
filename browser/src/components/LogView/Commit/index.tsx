@@ -1,14 +1,12 @@
 import * as React from 'react';
+import * as dayjs from 'dayjs';
 import { connect } from 'react-redux';
 import { CommittedFile, LogEntry, Status } from '../../../definitions';
 import { RootState } from '../../../reducers';
-import Author from './Author';
 import Avatar from './Avatar';
 import { FileTree, FileTreeDirNode, FileTreeNode } from './FileTree';
-import { GoX, GoClippy } from 'react-icons/go';
 import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
-import copyText from '../../../actions/copyText';
 
 interface CommitProps {
     selectedEntry?: LogEntry;
@@ -181,13 +179,14 @@ class Commit extends React.Component<CommitProps, CommitState> {
     public render() {
         return (
             <div id="detail-view">
+                <div className="detail-view-header">COMMIT DETAILS</div>
                 <div className="authorContainer">
                     <div style={{ minWidth: '40px' }}>
                         <Avatar result={this.props.selectedEntry.author}></Avatar>
                     </div>
                     <div className="author-info">
                         <div>{this.props.selectedEntry.author.name}</div>
-                        <div>{this.props.selectedEntry.committer.date.toLocaleDateString()}</div>
+                        <div>committed {dayjs(this.props.selectedEntry.committer.date).fromNow()}</div>
                     </div>
                     {/* <div className="actions">
                         <input

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-class LogHeader extends React.Component<{}, {}> {
+class LogHeader extends React.Component<{ right: number }, {}> {
     public render() {
         return (
-            <div className="log-header">
+            <div className="log-header" style={{ right: `${this.props.right}px` }}>
                 <div className="title">BRANCH / TAG</div>
                 <div className="title" style={{ flex: 1 }}>
                     GRAPH

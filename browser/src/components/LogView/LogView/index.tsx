@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ResultActions } from '../../../actions/results';
 import { LogEntry, Ref } from '../../../definitions';
 import { LogEntriesState, RootState } from '../../../reducers';
-import LogHeader from '../LogHeader';
+import LogHeader from '../LogHeader/index';
 import BranchGraph from '../BranchGraph';
 import LogEntryList from '../LogEntryList';
 import LogBranchAndTag from '../LogBranchAndTag';
@@ -11,6 +11,7 @@ import Dialog, { DialogType } from '../../Dialog';
 import { IConfiguration } from 'src/reducers/vscode';
 
 type LogViewProps = {
+    pane2Size: number;
     logEntries: LogEntriesState;
     configuration: IConfiguration;
     commitsRendered: typeof ResultActions.commitsRendered;
@@ -61,10 +62,9 @@ class LogView extends React.Component<LogViewProps, LogViewState> {
     }
 
     public render() {
-        console.log('props', this.props);
         return (
             <div className="log-view" id="scrollCnt">
-                <LogHeader></LogHeader>
+                <LogHeader right={this.props.pane2Size}></LogHeader>
                 <div className="log-view-content">
                     <div className="log-branch-tag">
                         <LogBranchAndTag logEntries={this.props.logEntries.items} />

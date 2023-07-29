@@ -7,6 +7,10 @@ import { initialize } from './actions/messagebus';
 import App from './containers/App';
 import { ISettings } from './definitions';
 import configureStore from './store';
+import * as dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const defaultSettings: ISettings = window['settings'];
 

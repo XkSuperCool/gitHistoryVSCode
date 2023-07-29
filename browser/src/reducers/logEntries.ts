@@ -50,6 +50,13 @@ export default handleActions<LogEntriesState, any>(
                 isLoadingCommit: undefined,
             };
         },
+        [Actions.SELECTED_COMMIT]: (state, action: ReduxActions.Action<string>) => {
+            const logEntry = state.items.find(x => x.hash.full === action.payload);
+            return {
+                ...state,
+                selected: logEntry,
+            };
+        },
         [Actions.FETCHED_COMMIT]: (state, action: ReduxActions.Action<LogEntry>) => {
             fixDates(action.payload);
 

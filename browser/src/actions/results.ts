@@ -19,6 +19,7 @@ export const notifyIsFetchingCommit = createAction<string>(Actions.IS_FETCHING_C
 export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
 export const updateGraphTick = createAction<void>(Actions.UPDATE_GRAPH_TICK);
 export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
+export const selectCommitAction = createAction<string>(Actions.SELECTED_COMMIT);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ResultActions {
@@ -106,9 +107,8 @@ export namespace ResultActions {
     };
     export const selectCommit = (hash?: string) => {
         return async (dispatch: Dispatch<any>, getState: () => RootState) => {
-            const state = getState();
             if (hash) {
-                await fetchCommit(dispatch, state, hash);
+                await dispatch(selectCommitAction(hash));
             } else {
                 await dispatch(clearCommitSelection());
             }

@@ -1,7 +1,17 @@
 import * as React from 'react';
 import { FileTreeNode } from './index';
 import { CommittedFile, Status } from '../../../../definitions';
-import { GoChevronDown, GoFileDirectory, GoPlus, GoDash, GoDiff } from 'react-icons/go';
+import {
+    AiOutlineRight,
+    AiOutlineDown,
+    AiOutlineFolder,
+    AiFillPlusCircle,
+    AiFillMinusCircle,
+    AiFillMediumCircle,
+    AiFillTrademarkCircle,
+    AiFillCopyrightCircle,
+} from 'react-icons/ai';
+import { IconType } from 'react-icons/lib';
 
 interface TreeNodeProps {
     data: FileTreeNode;
@@ -15,23 +25,31 @@ export class TreeNode extends React.Component<TreeNodeProps> {
 
     private renderFileStatusIcon = () => {
         const data = this.props.data as CommittedFile;
-        let Icon: typeof GoPlus;
+        let Icon: IconType;
+        let color: string;
         switch (data.status) {
             case Status.Added:
-                Icon = GoPlus;
+                color = 'var(--vscode-gitDecoration-addedResourceForeground)';
+                Icon = AiFillPlusCircle;
                 break;
             case Status.Copied:
+                color = '#FFC107';
+                Icon = AiFillCopyrightCircle;
                 break;
             case Status.Deleted:
-                Icon = GoDash;
+                color = 'var(--vscode-gitDecoration-deletedResourceForeground)';
+                Icon = AiFillMinusCircle;
                 break;
             case Status.Modified:
-                Icon = GoDiff;
+                color = 'var(--vscode-gitDecoration-modifiedResourceForeground)';
+                Icon = AiFillMediumCircle;
                 break;
             case Status.Renamed:
+                color = 'var(--vscode-gitDecoration-renamedResourceForeground)';
+                Icon = AiFillTrademarkCircle;
                 break;
         }
-        return Icon ? <Icon /> : null;
+        return Icon ? <Icon style={{ color }} /> : null;
     };
 
     private onChangeExpanded = () => {
@@ -43,12 +61,24 @@ export class TreeNode extends React.Component<TreeNodeProps> {
             <div>
                 <div
                     className="tree-node"
-                    style={{ paddingLeft: `${this.props.indent * 10}px` }}
+                    style={{ paddingLeft: `${this.props.indent * 14}px` }}
                     onClick={this.onChangeExpanded}
                 >
-                    <GoChevronDown className="tree-node-icon" style={{ opacity: this.props.data.directory ? 1 : 0 }} />
-                    {this.props.data.directory ? <GoFileDirectory /> : this.renderFileStatusIcon()}
-                    <span className="tree-node-name">{this.props.data.name}</span>
+                    {this.state.expanded ? (
+                        <AiOutlineDown
+                            className="tree-node-icon"
+                            style={{ opacity: this.props.data.directory ? 1 : 0 }}
+                        />
+                    ) : (
+                        <AiOutlineRight
+                            className="tree-node-icon"
+                            style={{ opacity: this.props.data.directory ? 1 : 0 }}
+                        />
+                    )}
+                    {this.props.data.directory ? <AiOutlineFolder /> : this.renderFileStatusIcon()}
+                    <span className="tree-node-name" title={this.props.data.name}>
+                        {this.props.data.name}
+                    </span>
                 </div>
                 {this.props.data.directory &&
                     this.state.expanded &&

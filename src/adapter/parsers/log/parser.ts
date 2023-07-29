@@ -70,7 +70,7 @@ export class LogParser implements ILogParser {
             return [];
         }
     }
-    private getCommitInfo(logItems: string[], logFormatArgs: string[], info: CommitInfo): string {
+    public getCommitInfo(logItems: string[], logFormatArgs: string[], info: CommitInfo): string {
         const commitInfoFormatCode = Helpers.GetCommitInfoFormatCode(info);
         const indexInArgs = logFormatArgs.indexOf(commitInfoFormatCode);
         if (indexInArgs === -1) {

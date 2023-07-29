@@ -1,4 +1,4 @@
-import { ActionedDetails, CommittedFile, LogEntry, Status } from '../../types';
+import { ActionedDetails, CommitInfo, CommittedFile, LogEntry, Status } from '../../types';
 
 export const IFileStatParser = 'IFileStatParser'; // Symbol.for('IFileStatParser');
 
@@ -25,4 +25,5 @@ export interface ILogParser {
         filesWithNumStat?: string,
         filesWithNameStatus?: string,
     ): LogEntry;
+    getCommitInfo(logItems: string[], logFormatArgs: string[], info: CommitInfo): string;
 }
