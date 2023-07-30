@@ -79,6 +79,9 @@ export class ApiController {
     public async getAuthors() {
         return this.gitService.getAuthors();
     }
+    public async getLocalAuthor() {
+        return this.gitService.getLocalAuthor();
+    }
     public async getCommit(args: any) {
         const hash: string = args.hash;
 

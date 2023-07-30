@@ -604,6 +604,9 @@ header .links {
     width: 100%;
     top: 0;
     z-index: 10;
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* #detail-view .commit-subject {
@@ -627,6 +630,12 @@ header .links {
     display: flex;
     margin-left: 15px;
     margin-top: 10px;
+}
+
+#detail-view .authorContainer .user-email {
+    font-size: var(--base-fs);
+    margin-left: 15px;
+    opacity: .6;
 }
 
 #detail-view .commit-date {
@@ -924,4 +933,10 @@ header .links {
 .changes-bar > div:last-child {
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
+}
+
+.commits-chart {
+    height: 45px;
+    position: relative;
+    z-index: 10;
 }

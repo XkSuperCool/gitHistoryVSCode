@@ -10,6 +10,7 @@ import { ISettings } from '../../definitions';
 import { LogEntriesState, RootState } from '../../reducers';
 import { IConfiguration } from '../../reducers/vscode';
 import Footer from '../../components/Footer';
+import CommmitsChart from '../../components/CommitsChart';
 
 type AppProps = {
     configuration: IConfiguration;
@@ -56,12 +57,13 @@ class App extends React.Component<AppProps, AppState> {
             <div className="appRootParent">
                 <div className="appRoot">
                     <Header></Header>
+                    <CommmitsChart></CommmitsChart>
                     <SplitPane
                         ref={this.splitPane}
                         split={'vertical'}
                         pane1Style={{ overflowY: 'auto' }}
                         defaultSize={INITIAL_PAN2_SIZE}
-                        style={{ paddingTop: '40px' }}
+                        style={{ paddingTop: '85px' }}
                         primary="second"
                         onChange={size => this.setState({ pane2Size: size })}
                     >

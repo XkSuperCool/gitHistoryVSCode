@@ -301,6 +301,16 @@ export class Git implements IGitService {
     }
 
     @captureTelemetry()
+    public async getLocalAuthor(): Promise<ActionedUser> {
+        const [name, email] = await Promise.all([this.exec('config', 'user.name'), this.exec('config', 'user.email')]);
+
+        return {
+            name: name.replace('\n', ''),
+            email: email.replace('\n', ''),
+        };
+    }
+
+    @captureTelemetry()
     public async getCommit(hash: string, withRefs = false): Promise<LogEntry | undefined> {
         const commitArgs = this.gitArgsService.getCommitArgs(hash);
         const nameStatusArgs = this.gitArgsService.getCommitNameStatusArgsForMerge(hash);

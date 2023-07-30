@@ -8,6 +8,7 @@ import settings from './settings';
 import { default as graph, IGraphState } from './graph';
 import logEntries from './logEntries';
 import vscode, { IVSCodeSettings } from './vscode';
+import localAuthor from './localAuthor';
 
 export type LogEntriesState = LogEntriesResponse & {
     isLoading: boolean;
@@ -25,6 +26,7 @@ export type RootState = {
     authors?: AuthorsState;
     settings?: ISettings;
     graph: IGraphState;
+    localAuthor?: ActionedUser;
 };
 
 export default combineReducers<RootState>({
@@ -36,4 +38,5 @@ export default combineReducers<RootState>({
     settings,
     graph,
     vscode,
+    localAuthor,
 } as any);

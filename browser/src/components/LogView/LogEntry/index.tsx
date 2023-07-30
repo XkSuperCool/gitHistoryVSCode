@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as dayjs from 'dayjs';
-import { LogEntry, Ref } from '../../../definitions';
+import { ActionedUser, LogEntry, Ref } from '../../../definitions';
 import { RootState } from '../../../reducers/index';
 import { gitmojify } from '../gitmojify';
 import ChangeBar from './ChangesBar';
@@ -11,6 +11,7 @@ import { FiCopy } from 'react-icons/fi';
 type ResultListProps = {
     logEntry: LogEntry;
     selected?: LogEntry;
+    localAuthor: ActionedUser;
     isLoadingCommit?: string;
     onViewCommit(entry: LogEntry): void;
     onAction(entry: LogEntry, name: string): void;
@@ -80,7 +81,11 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                     {gitmojify(this.props.logEntry.subject)}
                     <span style={{ marginLeft: '.5em' }}>{this.isLoading() ? this.showLoading() : ''}</span>
                 </div>
-                <div className="log-entry-item">{this.props.logEntry.author.name}</div>
+                <div className="log-entry-item" title={this.props.logEntry.author.email}>
+                    {this.props.logEntry.author.email === this.props.localAuthor.email
+                        ? 'You'
+                        : this.props.logEntry.author.name}
+                </div>
                 <div className="log-entry-item changes-info">
                     {this.props.logEntry.committedFiles.length > 999
                         ? '999+'
@@ -106,6 +111,7 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
 function mapStateToProps(state: RootState, wrapper: ResultListProps): ResultListProps {
     return {
         ...wrapper,
+        localAuthor: state.localAuthor,
         isLoadingCommit: state.logEntries.isLoadingCommit,
         selected: state.logEntries.selected,
     };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as dayjs from 'dayjs';
 import { connect } from 'react-redux';
-import { CommittedFile, LogEntry, Status } from '../../../definitions';
+import { ActionedUser, CommittedFile, LogEntry, Status } from '../../../definitions';
 import { RootState } from '../../../reducers';
 import Avatar from './Avatar';
 import { FileTree, FileTreeDirNode, FileTreeNode } from './FileTree';
@@ -12,6 +12,7 @@ import { AiOutlineRight, AiOutlineDown } from 'react-icons/ai';
 interface CommitProps {
     selectedEntry?: LogEntry;
     theme: string;
+    localAuthor: ActionedUser;
     closeCommitView: typeof ResultActions.closeCommitView;
     actionFile: typeof ResultActions.actionFile;
 }
@@ -186,7 +187,13 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         <Avatar result={this.props.selectedEntry.author}></Avatar>
                     </div>
                     <div className="author-info">
-                        <div>{this.props.selectedEntry.author.name}</div>
+                        <div>
+                            {this.props.selectedEntry.author.email === this.props.localAuthor.email
+                                ? 'You'
+                                : this.props.selectedEntry.author.name}
+
+                            <span className="user-email">{this.props.selectedEntry.author.email}</span>
+                        </div>
                         <div className="commit-date">
                             committed {dayjs(this.props.selectedEntry.committer.date).fromNow()}
                         </div>
@@ -245,11 +252,13 @@ class Commit extends React.Component<CommitProps, CommitState> {
 function mapStateToProps(state: RootState) {
     if (state.logEntries) {
         return {
+            localAuthor: state.localAuthor,
             selectedEntry: state.logEntries.selected,
             theme: state.vscode.theme,
         } as CommitProps;
     }
     return {
+        localAuthor: state.localAuthor,
         selectedEntry: undefined,
         theme: state.vscode.theme,
     } as CommitProps;

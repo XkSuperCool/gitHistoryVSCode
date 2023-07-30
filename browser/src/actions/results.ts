@@ -20,6 +20,7 @@ export const fetchedAvatar = createAction<Avatar[]>(Actions.FETCHED_AVATARS);
 export const updateGraphTick = createAction<void>(Actions.UPDATE_GRAPH_TICK);
 export const fetchedAuthors = createAction<ActionedUser[]>(Actions.FETCHED_AUTHORS);
 export const selectCommitAction = createAction<string>(Actions.SELECTED_COMMIT);
+export const fetchedLocalAuthor = createAction<ActionedUser>(Actions.FETCHED_LOCAL_AUTHOR);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ResultActions {
@@ -184,6 +185,12 @@ export namespace ResultActions {
             return fetchAuthors(dispatch, state);
         };
     };
+    export const getLocalAuthor = () => {
+        return (dispatch: Dispatch<any>, getState: () => RootState) => {
+            const state = getState();
+            return fetchLocalAuthor(dispatch, state);
+        };
+    };
 }
 function fetchCommits(dispatch: Dispatch<any>, store: RootState, pageIndex?: number, pageSize?: number) {
     dispatch(notifyIsLoading());
@@ -216,5 +223,10 @@ function fetchAuthors(dispatch: Dispatch<any>, store: RootState) {
         ...store.settings,
     }).then(x => {
         dispatch(fetchedAuthors(x));
+    });
+}
+function fetchLocalAuthor(dispatch: Dispatch<any>, store: RootState) {
+    post<ActionedUser>('getLocalAuthor', {}).then(x => {
+        dispatch(fetchedLocalAuthor(x));
     });
 }

@@ -136,6 +136,7 @@ export interface IGitService {
     getGitRelativePath(file: Uri): string;
     getHeadHashes(): Promise<{ ref?: string; hash?: string }[]>;
     getAuthors(): Promise<ActionedUser[]>;
+    getLocalAuthor(): Promise<ActionedUser>;
     getDetachedHash(): string | undefined;
     getBranches(withRemote?: boolean): Promise<Branch[]>;
     getCurrentBranch(): string;
