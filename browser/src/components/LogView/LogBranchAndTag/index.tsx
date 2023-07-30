@@ -50,14 +50,20 @@ class LogBranchAndTag extends React.Component<LogBranchAndTagProps> {
         if (!Array.isArray(this.props.logEntries)) {
             return null;
         }
-
-        return this.props.logEntries.map(entry => (
-            <div className="log-branch-and-tag">
-                {this.renderHeadRef(entry)}
-                {this.renderTagRef(entry)}
-                {this.renderRemoteRefs(entry)}
-            </div>
-        ));
+        return this.props.logEntries.map(entry => {
+            const results = [
+                ...this.renderHeadRef(entry),
+                ...this.renderTagRef(entry),
+                ...this.renderRemoteRefs(entry),
+            ].filter(items => items);
+            return (
+                <div className="log-branch-and-tag">
+                    {results.length !== 0 && results[0]}
+                    {results.length > 1 && <span className="rest-count">+{results.length - 1}</span>}
+                    {results.length > 1 && <div className="rest-container">{...results.slice(1)}</div>}
+                </div>
+            );
+        });
     }
 }
 

@@ -5,6 +5,7 @@ import {
     AiOutlineRight,
     AiOutlineDown,
     AiOutlineFolder,
+    AiOutlineFolderOpen,
     AiFillPlusCircle,
     AiFillMinusCircle,
     AiFillMediumCircle,
@@ -16,6 +17,9 @@ import { IconType } from 'react-icons/lib';
 interface TreeNodeProps {
     data: FileTreeNode;
     indent?: number;
+    selected?: FileTreeNode;
+    onSelect(node: FileTreeNode): void;
+    onAction: (CommittedFile, string) => void;
 }
 
 export class TreeNode extends React.Component<TreeNodeProps> {
@@ -52,17 +56,22 @@ export class TreeNode extends React.Component<TreeNodeProps> {
         return Icon ? <Icon style={{ color }} /> : null;
     };
 
-    private onChangeExpanded = () => {
-        this.setState({ expanded: !this.state.expanded });
+    private onClickTreeNode = () => {
+        this.props.onSelect(this.props.data);
+        if (this.props.data.directory) {
+            this.setState({ expanded: !this.state.expanded });
+        } else {
+            this.props.onAction(this.props.data, 'compare_previous');
+        }
     };
 
     public render() {
         return (
             <div>
                 <div
-                    className="tree-node"
+                    className={`tree-node ${this.props.selected === this.props.data ? 'selected' : ''}`}
                     style={{ paddingLeft: `${this.props.indent * 14}px` }}
-                    onClick={this.onChangeExpanded}
+                    onClick={this.onClickTreeNode}
                 >
                     {this.state.expanded ? (
                         <AiOutlineDown
@@ -75,7 +84,15 @@ export class TreeNode extends React.Component<TreeNodeProps> {
                             style={{ opacity: this.props.data.directory ? 1 : 0 }}
                         />
                     )}
-                    {this.props.data.directory ? <AiOutlineFolder /> : this.renderFileStatusIcon()}
+                    {this.props.data.directory ? (
+                        this.state.expanded ? (
+                            <AiOutlineFolderOpen />
+                        ) : (
+                            <AiOutlineFolder />
+                        )
+                    ) : (
+                        this.renderFileStatusIcon()
+                    )}
                     <span className="tree-node-name" title={this.props.data.name}>
                         {this.props.data.name}
                     </span>
@@ -83,7 +100,14 @@ export class TreeNode extends React.Component<TreeNodeProps> {
                 {this.props.data.directory &&
                     this.state.expanded &&
                     this.props.data.children.map(node => (
-                        <TreeNode data={node} key={node.name} indent={(this.props.indent || 0) + 1} />
+                        <TreeNode
+                            data={node}
+                            key={node.name}
+                            indent={(this.props.indent || 0) + 1}
+                            selected={this.props.selected}
+                            onSelect={this.props.onSelect}
+                            onAction={this.props.onAction}
+                        />
                     ))}
             </div>
         );

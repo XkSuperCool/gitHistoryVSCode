@@ -13,6 +13,7 @@ interface ChangesBarState {
         added: number;
         deleted: number;
         modified: number;
+        total: number;
     };
 }
 
@@ -22,6 +23,7 @@ class ChangesBar extends React.Component<ChangesBarProps, ChangesBarState> {
             added: 0,
             deleted: 0,
             modified: 0,
+            total: 0,
         },
     };
 
@@ -60,22 +62,35 @@ class ChangesBar extends React.Component<ChangesBarProps, ChangesBarState> {
         }
 
         const total = added + deleted + modified;
-        return { added: (added / total) * 100, deleted: (deleted / total) * 100, modified: (modified / total) * 100 };
+        return {
+            added,
+            deleted,
+            modified,
+            total,
+        };
     }
 
     public render() {
-        const { added, deleted, modified } = this.state.logEntryCountInfo;
+        const { added, deleted, modified, total } = this.state.logEntryCountInfo;
+        const title = [
+            added ? `added ${added} files` : '',
+            deleted ? `deleted ${deleted} files` : '',
+            modified ? `modified ${modified} files` : '',
+        ]
+            .filter(Boolean)
+            .join(', ');
         return (
             <div
+                title={title}
                 className={`changes-bar ${
                     this.props.selected && this.props.selected.hash.full === this.props.logEntry.hash.full
                         ? 'active'
                         : ''
                 }`}
             >
-                {!!added && <div className="added" style={{ width: `${added}%` }}></div>}
-                {!!deleted && <div className="deleted" style={{ width: `${deleted}%` }}></div>}
-                {!!modified && <div className="modified" style={{ width: `${modified}%` }}></div>}
+                {!!added && <div className="added" style={{ width: `${(added / total) * 100}%` }}></div>}
+                {!!deleted && <div className="deleted" style={{ width: `${(deleted / total) * 100}%` }}></div>}
+                {!!modified && <div className="modified" style={{ width: `${(modified / total) * 100}%` }}></div>}
             </div>
         );
     }

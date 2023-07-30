@@ -109,7 +109,7 @@ div.appRoot > header {
     left: 0;
     position: fixed;
     z-index: 10;
-    padding-right: 10px;
+    padding-right: 15px;
 }
 
 .log-header .title {
@@ -128,7 +128,31 @@ div.appRoot > header {
 
 .log-branch-and-tag {
     display: flex;
+    height: var(--log-entry-height);
     padding-left: 5px;
+    cursor: default;
+    position: relative;
+}
+
+.log-branch-and-tag:hover > .rest-container {
+    opacity: 1;
+    z-index: 10;
+}
+
+.log-branch-and-tag .rest-count {
+    font-size: var(--base-fs);
+    margin-left: -10px;
+    line-height: var(--log-entry-height);
+}
+
+.log-branch-and-tag .rest-container {
+    position: absolute;
+    top: 100%;
+    left: 5px;
+    right: 18px;
+    opacity: 0;
+    z-index: -1;
+    transition: .2s ease-in-out;
 }
 
 .log-view-content .log-branch-tag {
@@ -144,6 +168,8 @@ div.appRoot > header {
 .log-view-content .log-branch-graph {
     flex: 1;
     overflow-x: auto;
+    /* Fix alignment */
+    padding: 0 3px;
 }
 
 .log-view-content .log-branch-graph > svg {
@@ -196,11 +222,11 @@ div.appRoot > header {
     gap: 5px;
     align-items: center;
     justify-content: space-between;
-    padding-right: 15px;
 }
 
 .log-entry .changes-info .changes-bar {
-    width: 75%;
+    width: 65%;
+    margin-right: 10px;
 }
 
 .log-entry-gray{
@@ -302,13 +328,13 @@ div.appRoot > header {
 .commit-remote-container,
 .commit-tag-container,
 .commit-head-container {
+    width: 100%;
     flex: 1;
-    max-width: 75%;
 	white-space: nowrap;
     height: var(--log-entry-height);
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
 .commit-head-container .refs {
@@ -339,9 +365,10 @@ div.appRoot > header {
 .commit-remote-container .refs span,
 .commit-tag-container .refs span,
 .commit-head-container .refs span {
+    flex: 1;
+    width: 0;
     text-overflow: ellipsis;
     overflow-x: hidden;
-    display: inline-block;
 }
 .refs a.remove {
 	color: #ff6565;
@@ -602,6 +629,10 @@ header .links {
     margin-top: 10px;
 }
 
+#detail-view .commit-date {
+    font-size: var(--base-fs);
+}
+
 #detail-view .authorContainer img.avatar {
     height:40px;
     width:40px;
@@ -625,8 +656,12 @@ header .links {
     user-select: none;
 }
 
+#detail-view .detail-view-panel > svg {
+    font-size: 14px;
+}
+
 #detail-view .panel-content {
-    padding-left: 15px;
+    padding-left: 20px;
 }
 
 #detail-view .detail-view-panel .files-added {
@@ -838,6 +873,10 @@ header .links {
     cursor: pointer;
     user-select: none;
     padding: 2px 0;
+}
+
+.tree-node.selected, .tree-node:hover {
+    background-color: var(--vscode-list-inactiveSelectionBackground);
 }
 
 .tree-node svg:not(.tree-node-icon) {

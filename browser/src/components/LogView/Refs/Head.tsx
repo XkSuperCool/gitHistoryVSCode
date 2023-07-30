@@ -1,14 +1,30 @@
-import { Ref } from '../../../definitions';
+import { ISettings, Ref } from '../../../definitions';
 import * as React from 'react';
-import { FiMonitor } from 'react-icons/fi';
+import { connect } from 'react-redux';
+import { AiOutlineDesktop, AiOutlineCheck } from 'react-icons/ai';
+import { RootState } from 'src/reducers';
 
-export default function HeadRef(props: Ref) {
+interface HeadRefProps extends Ref {
+    settings: ISettings;
+}
+
+function HeadRef(props: HeadRefProps) {
     return (
         <div className="commit-head-container">
             <div className="refs" title={props.name}>
-                <FiMonitor />
-                {props.name}
+                {props.settings.branchName === props.name ? <AiOutlineCheck /> : null}
+                <AiOutlineDesktop />
+                <span>{props.name}</span>
             </div>
         </div>
     );
 }
+
+function mapStateToProps(state: RootState, wrapper: Ref): HeadRefProps {
+    return {
+        ...wrapper,
+        settings: state.settings,
+    };
+}
+
+export default connect(mapStateToProps)(HeadRef);

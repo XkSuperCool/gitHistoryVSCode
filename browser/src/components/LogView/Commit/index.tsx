@@ -7,6 +7,7 @@ import Avatar from './Avatar';
 import { FileTree, FileTreeDirNode, FileTreeNode } from './FileTree';
 import { ResultActions } from '../../../actions/results';
 import { gitmojify } from '../gitmojify';
+import { AiOutlineRight, AiOutlineDown } from 'react-icons/ai';
 
 interface CommitProps {
     selectedEntry?: LogEntry;
@@ -106,7 +107,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
 
             if (parentNode && fileTree.length == 1 && fileTree[0].directory) {
                 parentNode.name = `${parentNode.name}/${fileTree[0].name}`;
-                return formatFileTree(fileTree[0].children);
+                return formatFileTree(fileTree[0].children, parentNode);
             }
 
             for (let i = 0, len = sortedFileTree.length; i < len; i++) {
@@ -137,7 +138,7 @@ class Commit extends React.Component<CommitProps, CommitState> {
                 x => x.relativePath.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1,
             );
         }
-        return <FileTree data={this.filesToTrees(committedFiles)} />;
+        return <FileTree onAction={this.onActionFile} data={this.filesToTrees(committedFiles)} />;
     }
     private getFileCountInfo() {
         const { committedFiles } = this.props.selectedEntry;
@@ -186,7 +187,9 @@ class Commit extends React.Component<CommitProps, CommitState> {
                     </div>
                     <div className="author-info">
                         <div>{this.props.selectedEntry.author.name}</div>
-                        <div>committed {dayjs(this.props.selectedEntry.committer.date).fromNow()}</div>
+                        <div className="commit-date">
+                            committed {dayjs(this.props.selectedEntry.committer.date).fromNow()}
+                        </div>
                     </div>
                     {/* <div className="actions">
                         <input
@@ -220,10 +223,17 @@ class Commit extends React.Component<CommitProps, CommitState> {
                         className="detail-view-panel"
                         onClick={() => this.setState({ fileChangedExpanded: !this.state.fileChangedExpanded })}
                     >
+                        {this.state.fileChangedExpanded ? <AiOutlineDown /> : <AiOutlineRight />}
                         <strong>FILE CHANGED</strong>
-                        <span className="files-added">+{this.state.fileCountInfo.added}</span>
-                        <span className="files-modified">~{this.state.fileCountInfo.modified}</span>
-                        <span className="files-deleted">-{this.state.fileCountInfo.deleted}</span>
+                        <span title={`added ${this.state.fileCountInfo.added} files`} className="files-added">
+                            +{this.state.fileCountInfo.added}
+                        </span>
+                        <span title={`modified ${this.state.fileCountInfo.modified} files`} className="files-modified">
+                            ~{this.state.fileCountInfo.modified}
+                        </span>
+                        <span title={`deleted ${this.state.fileCountInfo.deleted} files`} className="files-deleted">
+                            -{this.state.fileCountInfo.deleted}
+                        </span>
                     </div>
                     <div className="panel-content">{this.state.fileChangedExpanded && this.renderFileTree()}</div>
                 </div>

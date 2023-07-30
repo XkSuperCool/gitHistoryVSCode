@@ -25,10 +25,11 @@ interface AppState {
     pane2Size: number;
 }
 
+const INITIAL_PAN2_SIZE = 350;
 class App extends React.Component<AppProps, AppState> {
     private splitPane;
     state = {
-        pane2Size: 300,
+        pane2Size: INITIAL_PAN2_SIZE,
     };
 
     constructor(props?: AppProps, context?: any) {
@@ -59,7 +60,7 @@ class App extends React.Component<AppProps, AppState> {
                         ref={this.splitPane}
                         split={'vertical'}
                         pane1Style={{ overflowY: 'auto' }}
-                        defaultSize={350}
+                        defaultSize={INITIAL_PAN2_SIZE}
                         style={{ paddingTop: '40px' }}
                         primary="second"
                         onChange={size => this.setState({ pane2Size: size })}

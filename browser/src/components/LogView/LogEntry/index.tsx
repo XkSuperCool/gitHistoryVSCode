@@ -82,7 +82,9 @@ class LogEntryView extends React.Component<ResultListProps, {}> {
                 </div>
                 <div className="log-entry-item">{this.props.logEntry.author.name}</div>
                 <div className="log-entry-item changes-info">
-                    {this.props.logEntry.committedFiles.length}
+                    {this.props.logEntry.committedFiles.length > 999
+                        ? '999+'
+                        : this.props.logEntry.committedFiles.length}
                     <ChangeBar logEntry={this.props.logEntry} />
                 </div>
                 <div className="log-entry-item">{dayjs(this.props.logEntry.committer.date).fromNow()}</div>
