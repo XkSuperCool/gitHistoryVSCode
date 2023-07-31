@@ -74,6 +74,23 @@ interface CommitsChartsState {
     timelines: Required<TimeLine>[];
 }
 
+function binarySearch(array: Required<TimeLine>[], x: number) {
+    let left = 0;
+    let right = array.length - 1;
+    let result: Required<TimeLine>;
+
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        if (array[mid].x < x) {
+            result = array[mid];
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return result;
+}
+
 export default class CommitsCharts extends React.Component<{}, CommitsChartsState> {
     state: CommitsChartsState = {
         timelines: [],
@@ -101,30 +118,25 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
     }
 
     private onMouseMove = (e: MouseEvent) => {
-        const { x } = e;
         const { timelines } = this.state;
-        for (let i = timelines.length - 1; i >= 0; i--) {
-            if (timelines[i].x < x) {
-                this.cleanSvgElements();
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                const x = timelines[i].x.toString();
-                const y = timelines[i].y.toString();
-                circle.setAttribute('cx', x);
-                circle.setAttribute('cy', y);
-                circle.setAttribute('r', '3');
-                circle.setAttribute('fill', 'var(--vscode-gitDecoration-addedResourceForeground)');
+        const timeline = binarySearch(timelines, e.x);
+        this.cleanSvgElements();
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const x = timeline.x.toString();
+        const y = timeline.y.toString();
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '3');
+        circle.setAttribute('fill', 'var(--vscode-gitDecoration-addedResourceForeground)');
 
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                line.setAttribute('stroke', 'rgba(219, 215, 202, 0.79)');
-                line.setAttribute('fill', 'none');
-                line.setAttribute('d', `M ${x} 0 ${x} 35`);
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        line.setAttribute('stroke', 'rgba(219, 215, 202, 0.79)');
+        line.setAttribute('fill', 'none');
+        line.setAttribute('d', `M ${x} 0 ${x} 35`);
 
-                this.svg.appendChild(line);
-                this.svg.appendChild(circle);
-                this.setState({ svgElements: [circle, line] });
-                break;
-            }
-        }
+        this.svg.appendChild(line);
+        this.svg.appendChild(circle);
+        this.setState({ svgElements: [circle, line] });
     };
 
     private cleanSvgElements = () => {
