@@ -150,8 +150,9 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
     };
 
     private drawTimeLines = () => {
-        this.svg.addEventListener('mousemove', this.onMouseMove);
-        this.svg.addEventListener('mouseleave', this.onMouseLeave);
+        this.svg.childNodes.forEach(node => {
+            this.svg.removeChild(node);
+        });
         const width = this.svg.getBoundingClientRect().width;
         const { timelines, maxCount } = this.getLastYearTimeLines();
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -179,9 +180,13 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
     public componentWillUnmount() {
         this.svg.removeEventListener('mousemove', this.onMouseMove);
         this.svg.removeEventListener('mouseleave', this.onMouseLeave);
+        window.removeEventListener('resize', this.drawTimeLines);
     }
 
     public componentDidMount() {
+        this.svg.addEventListener('mousemove', this.onMouseMove);
+        this.svg.addEventListener('mouseleave', this.onMouseLeave);
+        window.addEventListener('resize', this.drawTimeLines);
         this.drawTimeLines();
     }
 
