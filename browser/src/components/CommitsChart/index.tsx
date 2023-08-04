@@ -72,6 +72,7 @@ export interface TimeLine {
 interface CommitsChartsState {
     svgElements?: SVGElement[];
     timelines: Required<TimeLine>[];
+    currentCommit?: Required<TimeLine>;
 }
 
 function binarySearch(array: Required<TimeLine>[], x: number) {
@@ -112,7 +113,7 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
             });
         }
         return {
-            timelines,
+            timelines: timelines.reverse(),
             maxCount,
         };
     }
@@ -136,7 +137,7 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
 
         this.svg.appendChild(line);
         this.svg.appendChild(circle);
-        this.setState({ svgElements: [circle, line] });
+        this.setState({ svgElements: [circle, line], currentCommit: timeline });
     };
 
     private cleanSvgElements = () => {
@@ -175,6 +176,7 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
 
     private onMouseLeave = () => {
         this.cleanSvgElements();
+        this.setState({ currentCommit: undefined });
     };
 
     public componentWillUnmount() {
@@ -190,8 +192,28 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
         this.drawTimeLines();
     }
 
+    private renderCommitModal() {
+        const { count, date } = this.state.currentCommit;
+        return (
+            <div className="commit-detail-modal" style={{ left: `${this.state.currentCommit.x}px` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    {dayjs(date).format('MMM D, YYYY')}
+                    <span>{dayjs(date).fromNow()}</span>
+                </div>
+                <div style={{ marginTop: '5px' }}>
+                    {count > 0 ? `${count} commit${count === 1 ? '' : 's'}` : 'No commit'}
+                </div>
+            </div>
+        );
+    }
+
     private svg: SVGSVGElement;
     render() {
-        return <svg className="commits-chart" ref={ref => (this.svg = ref)} xmlns="http://www.w3.org/2000/svg"></svg>;
+        return (
+            <div className="commits-chart-container">
+                <svg className="commits-chart" ref={ref => (this.svg = ref)} xmlns="http://www.w3.org/2000/svg"></svg>
+                {this.state.currentCommit && this.renderCommitModal()}
+            </div>
+        );
     }
 }

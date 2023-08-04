@@ -53,7 +53,7 @@ export class TreeNode extends React.Component<TreeNodeProps> {
                 Icon = AiFillTrademarkCircle;
                 break;
         }
-        return Icon ? <Icon style={{ color }} /> : null;
+        return Icon ? <Icon style={{ color }} title={Status[data.status]} /> : null;
     };
 
     private onClickTreeNode = () => {
