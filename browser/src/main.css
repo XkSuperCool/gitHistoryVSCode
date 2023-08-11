@@ -947,13 +947,14 @@ header .links {
 }
 
 .commits-chart-container .commit-detail-modal {
+    color: var(--vscode-editorHoverWidget-foreground);
     font-size: var(--base-fs);
     position: absolute;
     top: 100%;
-    border: 1px solid #f1f1f157;
+    border: 1px solid var(--vscode-editorHoverWidget-border);
     width: 200px;
     padding: 5px 10px;
     z-index: 100;
     border-radius: 2px;
-    background-color: #333;
+    background-color: var(--vscode-editorHoverWidget-background);
 }

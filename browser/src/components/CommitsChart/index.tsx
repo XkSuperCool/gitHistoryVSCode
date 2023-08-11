@@ -93,6 +93,7 @@ function binarySearch(array: Required<TimeLine>[], x: number) {
 }
 
 export default class CommitsCharts extends React.Component<{}, CommitsChartsState> {
+    chartWidth: number;
     state: CommitsChartsState = {
         timelines: [],
     };
@@ -154,7 +155,7 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
         this.svg.childNodes.forEach(node => {
             this.svg.removeChild(node);
         });
-        const width = this.svg.getBoundingClientRect().width;
+        const width = (this.chartWidth = this.svg.getBoundingClientRect().width);
         const { timelines, maxCount } = this.getLastYearTimeLines();
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         line.setAttribute('stroke', 'var(--vscode-gitDecoration-addedResourceForeground)');
@@ -194,8 +195,9 @@ export default class CommitsCharts extends React.Component<{}, CommitsChartsStat
 
     private renderCommitModal() {
         const { count, date } = this.state.currentCommit;
+        const x = Math.min(this.state.currentCommit.x, this.chartWidth - 200);
         return (
-            <div className="commit-detail-modal" style={{ left: `${this.state.currentCommit.x}px` }}>
+            <div className="commit-detail-modal" style={{ left: `${x}px` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     {dayjs(date).format('MMM D, YYYY')}
                     <span>{dayjs(date).fromNow()}</span>
